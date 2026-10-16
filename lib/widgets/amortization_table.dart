@@ -52,76 +52,103 @@ class _AmortizationTableState extends State<AmortizationTable> {
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minWidth: 600,
-                        maxWidth: constraints.maxWidth > 600 ? constraints.maxWidth : 600,
+                        maxWidth: constraints.maxWidth > 600
+                            ? constraints.maxWidth
+                            : 600,
                       ),
                       child: Column(
                         children: [
-                      Container(
-                        color: LoanPalTheme.primaryNavy,
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                        child: Row(
-                          children: [
-                            _buildHeaderCell('Month', flex: 1),
-                            _buildHeaderCell('Opening Bal', flex: 2),
-                            _buildHeaderCell('EMI', flex: 2),
-                            _buildHeaderCell('Interest', flex: 2),
-                            _buildHeaderCell('Principal', flex: 2),
-                            _buildHeaderCell('Closing Bal', flex: 2),
-                          ],
-                        ),
+                          Container(
+                            color: LoanPalTheme.primaryNavy,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 8,
+                            ),
+                            child: Row(
+                              children: [
+                                _buildHeaderCell('Month', flex: 1),
+                                _buildHeaderCell('Opening Bal', flex: 2),
+                                _buildHeaderCell('EMI', flex: 2),
+                                _buildHeaderCell('Interest', flex: 2),
+                                _buildHeaderCell('Principal', flex: 2),
+                                _buildHeaderCell('Closing Bal', flex: 2),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: widget.rows.length,
+                              itemBuilder: (context, index) {
+                                final AmortizationRow row = widget.rows[index];
+                                final bool isLast =
+                                    index == widget.rows.length - 1;
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: index % 2 == 0
+                                        ? Colors.white
+                                        : LoanPalTheme.background,
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: LoanPalTheme.outlineColor
+                                            .withValues(alpha: 0.3),
+                                      ),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      _buildDataCell(
+                                        row.month.toString(),
+                                        flex: 1,
+                                      ),
+                                      _buildDataCell(
+                                        CurrencyUtils.formatINR(
+                                          row.openingBalance,
+                                        ),
+                                        flex: 2,
+                                      ),
+                                      _buildDataCell(
+                                        CurrencyUtils.formatINR(row.emi),
+                                        flex: 2,
+                                      ),
+                                      _buildDataCell(
+                                        CurrencyUtils.formatINR(row.interest),
+                                        flex: 2,
+                                        color: LoanPalTheme.burdenHigh,
+                                      ),
+                                      _buildDataCell(
+                                        CurrencyUtils.formatINR(row.principal),
+                                        flex: 2,
+                                        color: LoanPalTheme.primaryNavy,
+                                      ),
+                                      _buildDataCell(
+                                        isLast
+                                            ? '₹0.00 ✓'
+                                            : CurrencyUtils.formatINR(
+                                                row.closingBalance,
+                                              ),
+                                        flex: 2,
+                                        isBold: isLast,
+                                        color: isLast
+                                            ? LoanPalTheme.burdenLow
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: widget.rows.length,
-                          itemBuilder: (context, index) {
-                            final AmortizationRow row = widget.rows[index];
-                            final bool isLast = index == widget.rows.length - 1;
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: index % 2 == 0
-                                    ? Colors.white
-                                    : LoanPalTheme.background,
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: LoanPalTheme.outlineColor.withValues(alpha: 0.3),
-                                  ),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                              child: Row(
-                                children: [
-                                  _buildDataCell(row.month.toString(), flex: 1),
-                                  _buildDataCell(CurrencyUtils.formatINR(row.openingBalance), flex: 2),
-                                  _buildDataCell(CurrencyUtils.formatINR(row.emi), flex: 2),
-                                  _buildDataCell(
-                                    CurrencyUtils.formatINR(row.interest),
-                                    flex: 2,
-                                    color: LoanPalTheme.burdenHigh,
-                                  ),
-                                  _buildDataCell(
-                                    CurrencyUtils.formatINR(row.principal),
-                                    flex: 2,
-                                    color: LoanPalTheme.primaryNavy,
-                                  ),
-                                  _buildDataCell(
-                                    isLast ? '₹0.00 ✓' : CurrencyUtils.formatINR(row.closingBalance),
-                                    flex: 2,
-                                    isBold: isLast,
-                                    color: isLast ? LoanPalTheme.burdenLow : null,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-            },
-          ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -143,7 +170,12 @@ class _AmortizationTableState extends State<AmortizationTable> {
     );
   }
 
-  Widget _buildDataCell(String text, {required int flex, Color? color, bool isBold = false}) {
+  Widget _buildDataCell(
+    String text, {
+    required int flex,
+    Color? color,
+    bool isBold = false,
+  }) {
     return Expanded(
       flex: flex,
       child: Text(

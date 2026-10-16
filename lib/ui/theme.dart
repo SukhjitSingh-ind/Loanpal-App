@@ -32,13 +32,44 @@ class LoanPalTheme {
       scaffoldBackgroundColor: background,
       fontFamily: 'Inter',
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.w700, letterSpacing: -0.02, color: textMain),
-        displayMedium: TextStyle(fontSize: 36, fontWeight: FontWeight.w700, letterSpacing: -0.02, color: textMain),
-        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w600, color: textMain),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: textMain),
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: textMain),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: textSecondary),
-        labelLarge: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.05, color: textSecondary),
+        displayLarge: TextStyle(
+          fontSize: 48,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.02,
+          color: textMain,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.02,
+          color: textMain,
+        ),
+        headlineLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.w600,
+          color: textMain,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: textMain,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: textMain,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: textSecondary,
+        ),
+        labelLarge: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.05,
+          color: textSecondary,
+        ),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: secondaryTeal,

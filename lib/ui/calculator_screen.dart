@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loanpal/logic/emi_calculator.dart';
 import 'package:loanpal/ui/theme.dart';
@@ -8,11 +9,17 @@ import 'package:loanpal/widgets/burden_indicator.dart';
 import 'package:loanpal/widgets/amortization_table.dart';
 import 'package:loanpal/logic/app_config.dart';
 import 'package:loanpal/ui/admin_dashboard_screen.dart';
+import 'package:loanpal/services/auth_service.dart';
+import 'package:loanpal/models/user_profile.dart';
+import 'package:loanpal/services/user_profile_service.dart';
 
 enum TenureType { months, years }
 
 class CalculatorScreen extends StatefulWidget {
-  const CalculatorScreen({super.key});
+  final UserProfile? userProfile;
+  final Future<void> Function()? onSignOut;
+
+  const CalculatorScreen({super.key, this.userProfile, this.onSignOut});
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -34,19 +41,86 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final ScrollController _rightScrollController = ScrollController();
 
   final AppConfig _config = AppConfig();
+  UserProfile? _profile;
 
   @override
   void initState() {
     super.initState();
+    _profile = widget.userProfile ?? UserProfileService().currentProfile;
+    if (_profile == null) {
+      _loadProfile();
+    }
     _config.addListener(_onConfigChanged);
     _syncTenureWithConfig();
     _calculate();
   }
 
+  @override
+  void didUpdateWidget(covariant CalculatorScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.userProfile != oldWidget.userProfile &&
+        widget.userProfile != null) {
+      setState(() {
+        _profile = widget.userProfile;
+      });
+    }
+  }
+
+  Future<void> _loadProfile() async {
+    final user = AuthService().currentUser;
+    if (user != null) {
+      try {
+        final p = await UserProfileService().getUserProfile(user.uid);
+        if (mounted && p != null) {
+          setState(() => _profile = p);
+        }
+      } catch (_) {}
+    }
+  }
+
+  String get _greetingTitle {
+    if (_profile != null && _profile!.firstName.isNotEmpty) {
+      return 'Hi, ${_profile!.firstName}!';
+    }
+    final user = AuthService().currentUser;
+    final displayName = user?.displayName;
+    if (displayName != null && displayName.isNotEmpty) {
+      return 'Hi, ${displayName.split(' ').first}!';
+    }
+    if (_profile != null && _profile!.username.isNotEmpty) {
+      return 'Hi, ${_profile!.username}!';
+    }
+    final email = user?.email;
+    if (email != null) {
+      return 'Welcome, $email';
+    }
+    return 'Welcome to LoanPal';
+  }
+
+  String get _greetingSubtitle => 'Smart EMI & Loan Planner';
+
+  String get _avatarLetter {
+    if (_profile != null && _profile!.firstName.isNotEmpty) {
+      return _profile!.firstName[0].toUpperCase();
+    }
+    final user = AuthService().currentUser;
+    final displayName = user?.displayName;
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName[0].toUpperCase();
+    }
+    if (_profile != null && _profile!.username.isNotEmpty) {
+      return _profile!.username[0].toUpperCase();
+    }
+    final email = user?.email;
+    if (email != null && email.isNotEmpty) {
+      return email[0].toUpperCase();
+    }
+    return 'L';
+  }
+
   void _onConfigChanged() {
     setState(() {
       _syncTenureWithConfig();
-      // Ensure values don't exceed new max limits
       if (_principal > _config.maxPrincipal) _principal = _config.maxPrincipal;
       if (_apr > _config.maxApr) _apr = _config.maxApr;
       _calculate();
@@ -106,18 +180,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
-  void _showPinDialog() {
-    final TextEditingController pinController = TextEditingController();
+  void _openDevDashboard() {
+    // INFO: The admin dashboard modifies in-memory AppConfig for local developer
+    // testing only. Access is restricted to debug builds (kDebugMode).
+    if (!kDebugMode) return;
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Admin Access'),
-          content: TextField(
-            controller: pinController,
-            obscureText: true,
-            decoration: const InputDecoration(hintText: 'Enter PIN'),
-            keyboardType: TextInputType.number,
+          title: const Text('Developer Settings'),
+          content: const Text(
+            'Open local developer configuration to adjust in-memory slider limits? (Debug mode only)',
           ),
           actions: [
             TextButton(
@@ -126,20 +200,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ),
             TextButton(
               onPressed: () {
-                if (pinController.text == '1234') {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AdminDashboardScreen()),
-                  );
-                } else {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Incorrect PIN')),
-                  );
-                }
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminDashboardScreen(),
+                  ),
+                );
               },
-              child: const Text('LOGIN'),
+              child: const Text('OPEN'),
             ),
           ],
         );
@@ -154,22 +223,130 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          onLongPress: _showPinDialog,
-          child: const Text('LoanPal', style: TextStyle(fontWeight: FontWeight.bold)),
+          onLongPress: kDebugMode ? _openDevDashboard : null,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/loanpal_logo.png',
+                height: 28,
+                width: 28,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'LoanPal',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
         backgroundColor: Colors.transparent,
         foregroundColor: LoanPalTheme.primaryNavy,
         elevation: 0,
         centerTitle: false,
+        actions: [
+          IconButton(
+            tooltip: 'Sign Out',
+            icon: const Icon(Icons.logout_rounded),
+            onPressed: () async {
+              final shouldSignOut = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sign Out'),
+                  content: const Text(
+                    'Are you sure you want to sign out of LoanPal?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('CANCEL'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('SIGN OUT'),
+                    ),
+                  ],
+                ),
+              );
+              if (shouldSignOut == true) {
+                if (widget.onSignOut != null) {
+                  await widget.onSignOut!();
+                } else {
+                  await AuthService().signOut();
+                }
+              }
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final bool isWide = constraints.maxWidth > 800;
 
+            final Widget greetingSection = Container(
+              margin: const EdgeInsets.only(bottom: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                  color: LoanPalTheme.outlineColor.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: LoanPalTheme.primaryNavy.withValues(
+                      alpha: 0.1,
+                    ),
+                    child: Text(
+                      _avatarLetter,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: LoanPalTheme.primaryNavy,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _greetingTitle,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: LoanPalTheme.textMain,
+                          ),
+                        ),
+                        if (_greetingSubtitle.isNotEmpty)
+                          Text(
+                            _greetingSubtitle,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: LoanPalTheme.textSecondary,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+
             final Widget inputSection = Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                greetingSection,
                 InputSlider(
                   label: 'Principal Amount',
                   value: _principal,
@@ -202,14 +379,20 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     Text(
                       'Tenure',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     if (_config.allowedTenure == AllowedTenure.both)
                       SegmentedButton<TenureType>(
                         segments: const [
-                          ButtonSegment(value: TenureType.months, label: Text('Months')),
-                          ButtonSegment(value: TenureType.years, label: Text('Years')),
+                          ButtonSegment(
+                            value: TenureType.months,
+                            label: Text('Months'),
+                          ),
+                          ButtonSegment(
+                            value: TenureType.years,
+                            label: Text('Years'),
+                          ),
                         ],
                         selected: {_tenureType},
                         onSelectionChanged: _toggleTenureType,
@@ -274,7 +457,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         child: SingleChildScrollView(
                           controller: _rightScrollController,
                           padding: const EdgeInsets.all(24.0),
-                          child: AmortizationTable(rows: _model.amortizationRows),
+                          child: AmortizationTable(
+                            rows: _model.amortizationRows,
+                          ),
                         ),
                       ),
                     ],

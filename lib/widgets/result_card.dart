@@ -22,10 +22,7 @@ class ResultCard extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            Text(
-              'Monthly EMI',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
+            Text('Monthly EMI', style: Theme.of(context).textTheme.labelLarge),
             const SizedBox(height: 8),
             Text(
               CurrencyUtils.formatINRCompact(emi),
@@ -57,10 +54,7 @@ class ResultCard extends StatelessWidget {
   Widget _buildSubMetric(BuildContext context, String label, double value) {
     return Column(
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 4),
         Text(
           CurrencyUtils.formatINRCompact(value),

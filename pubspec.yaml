@@ -8,6 +8,9 @@ environment:
   sdk: ^3.9.0
 
 dependencies:
+  cloud_firestore: ^6.10.0
+  firebase_auth: ^6.7.0
+  firebase_core: ^4.15.0
   flutter:
     sdk: flutter
 
@@ -15,6 +18,28 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/images/loanpal_app_icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/loanpal_adaptive_foreground.png"
+  web:
+    generate: true
+    image_path: "assets/images/loanpal_app_icon.png"
+    background_color: "#FFFFFF"
+    theme_color: "#173F73"
+  windows:
+    generate: true
+    image_path: "assets/images/loanpal_app_icon.png"
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: "assets/images/loanpal_app_icon.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/

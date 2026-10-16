@@ -98,22 +98,27 @@ class _InputSliderState extends State<InputSlider> {
           children: [
             Text(
               widget.label,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(
               width: 120,
               child: TextField(
                 controller: _controller,
                 focusNode: _focusNode,
-                keyboardType: TextInputType.numberWithOptions(decimal: widget.isPercentage),
+                keyboardType: TextInputType.numberWithOptions(
+                  decimal: widget.isPercentage,
+                ),
                 textAlign: TextAlign.right,
                 style: const TextStyle(fontWeight: FontWeight.w600),
                 decoration: InputDecoration(
                   prefixText: widget.prefix,
                   suffixText: widget.suffix,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   isDense: true,
                 ),
                 onSubmitted: (_) => _submitText(),
