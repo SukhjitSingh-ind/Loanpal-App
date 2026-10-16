@@ -59,13 +59,13 @@ class BurdenIndicator extends StatelessWidget {
           Text(
             '$label (${interestPercentage.toStringAsFixed(1)}%)',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  // INFO: Amber (#F4C430) has poor contrast on its own tinted
-                  // background, so dark brown is used for the Moderate label text.
-                  color: burdenColor == LoanPalTheme.burdenModerate
-                      ? Colors.brown.shade800
-                      : burdenColor,
-                  fontWeight: FontWeight.bold,
-                ),
+              // INFO: Amber (#F4C430) has poor contrast on its own tinted
+              // background, so dark brown is used for the Moderate label text.
+              color: burdenColor == LoanPalTheme.burdenModerate
+                  ? Colors.brown.shade800
+                  : burdenColor,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

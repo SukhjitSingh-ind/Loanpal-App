@@ -23,7 +23,7 @@ class AppConfig extends ChangeNotifier {
     if (allowedTenure != null) _allowedTenure = allowedTenure;
     if (maxPrincipal != null) _maxPrincipal = maxPrincipal;
     if (maxApr != null) _maxApr = maxApr;
-    
+
     notifyListeners();
   }
 }

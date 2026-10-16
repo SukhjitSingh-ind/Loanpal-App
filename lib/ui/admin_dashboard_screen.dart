@@ -30,9 +30,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       maxPrincipal: _maxPrincipal,
       maxApr: _maxApr,
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Admin settings saved.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Admin settings saved.')));
     Navigator.of(context).pop();
   }
 
@@ -40,8 +40,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: LoanPalTheme.burdenHeavy, 
+        title: const Text(
+          'Admin Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: LoanPalTheme.burdenHeavy,
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
@@ -58,17 +61,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 32),
-            
+
             const Text(
               'Allowed Tenure Units',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<AllowedTenure>(
-              value: _selectedTenure,
+              initialValue: _selectedTenure,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               items: const [
                 DropdownMenuItem(
@@ -90,9 +96,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 }
               },
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             const Text(
               'Maximum Principal Amount',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -123,7 +129,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             const SizedBox(height: 8),
             TextFormField(
               initialValue: _maxApr.toStringAsFixed(1),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 suffixText: '%',
@@ -145,9 +153,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 backgroundColor: LoanPalTheme.burdenHeavy,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: const Text('SAVE SETTINGS', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'SAVE SETTINGS',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

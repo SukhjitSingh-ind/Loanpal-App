@@ -131,8 +131,10 @@ void main() {
         annualRate: 10.5,
         tenureMonths: 60,
       );
-      final double sumInterest =
-          model.amortizationRows.fold(0.0, (sum, r) => sum + r.interest);
+      final double sumInterest = model.amortizationRows.fold(
+        0.0,
+        (sum, r) => sum + r.interest,
+      );
       expect(sumInterest, closeTo(model.totalInterest, 0.01));
     });
 
@@ -142,8 +144,10 @@ void main() {
         annualRate: 10.5,
         tenureMonths: 60,
       );
-      final double sumPrincipal =
-          model.amortizationRows.fold(0.0, (sum, r) => sum + r.principal);
+      final double sumPrincipal = model.amortizationRows.fold(
+        0.0,
+        (sum, r) => sum + r.principal,
+      );
       expect(sumPrincipal, closeTo(model.principal, 0.01));
     });
 
@@ -153,8 +157,10 @@ void main() {
         annualRate: 10.5,
         tenureMonths: 60,
       );
-      expect(model.totalPayable,
-          closeTo(model.principal + model.totalInterest, 0.01));
+      expect(
+        model.totalPayable,
+        closeTo(model.principal + model.totalInterest, 0.01),
+      );
     });
 
     test('Opening balance of first row equals principal', () {

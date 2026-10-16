@@ -82,18 +82,23 @@ class EMICalculationModel {
         finalEmi = emi;
         // INFO: Guard against tiny negative balances from floating-point drift
         // before the final-month adjustment takes effect.
-        closingBalance = (balance - principalForMonth).clamp(0.0, double.infinity);
+        closingBalance = (balance - principalForMonth).clamp(
+          0.0,
+          double.infinity,
+        );
       }
 
       accumulatedInterest += interestForMonth;
-      rows.add(AmortizationRow(
-        month: month,
-        openingBalance: balance,
-        emi: finalEmi,
-        interest: interestForMonth,
-        principal: principalForMonth,
-        closingBalance: closingBalance,
-      ));
+      rows.add(
+        AmortizationRow(
+          month: month,
+          openingBalance: balance,
+          emi: finalEmi,
+          interest: interestForMonth,
+          principal: principalForMonth,
+          closingBalance: closingBalance,
+        ),
+      );
       balance = closingBalance;
     }
 

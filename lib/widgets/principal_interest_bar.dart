@@ -48,31 +48,43 @@ class PrincipalInterestBar extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildLegend(context, 'Principal', LoanPalTheme.primaryNavy, principalPercentage),
-            _buildLegend(context, 'Interest', LoanPalTheme.burdenHigh, interestPercentage),
+            _buildLegend(
+              context,
+              'Principal',
+              LoanPalTheme.primaryNavy,
+              principalPercentage,
+            ),
+            _buildLegend(
+              context,
+              'Interest',
+              LoanPalTheme.burdenHigh,
+              interestPercentage,
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildLegend(BuildContext context, String label, Color color, double percentage) {
+  Widget _buildLegend(
+    BuildContext context,
+    String label,
+    Color color,
+    double percentage,
+  ) {
     return Row(
       children: [
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
         Text(
           '$label ${percentage.toStringAsFixed(1)}%',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );
